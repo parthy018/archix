@@ -12,15 +12,15 @@ const LazyLoadSection = ({ services, ServiceImage }) => {
   return (
     <section
       className="py-20 relative"
-      style={{
-        backgroundImage: isImageLoaded
-          ? `url(${ServiceImage})`
-          : "linear-gradient(to right, #e3e3e3, #cfcfcf)", // Placeholder while loading
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
+      // style={{
+      //   backgroundImage: isImageLoaded
+      //     ? `url(${ServiceImage})`
+      //     : "linear-gradient(to right, #e3e3e3, #cfcfcf)", // Placeholder while loading
+      //   backgroundSize: "cover",
+      //   backgroundPosition: "center",
+      // }}
     >
-      <div
+      {/* <div
         style={{
           position: "absolute",
           top: 0,
@@ -30,7 +30,7 @@ const LazyLoadSection = ({ services, ServiceImage }) => {
           backgroundColor: "rgba(255, 255, 255, 0.5)", // Adds a semi-transparent overlay
           backdropFilter: "blur(5px)", // Adds blur effect
         }}
-      ></div>
+      ></div> */}
 
       {/* Content */}
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">

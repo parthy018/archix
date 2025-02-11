@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { FiMenu, FiX } from 'react-icons/fi';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,6 +10,7 @@ const Navbar = () => {
   const location = useLocation();
   const isActive=(path)=>location.pathname===path;
   const isHomePage = location.pathname === '/';
+  const {isAuth}=useSelector((state)=>state.app);
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
@@ -45,6 +47,15 @@ const Navbar = () => {
           <NavLink to="/contact" isActive={location.pathname === '/contact'} isScrolled={isScrolled} isHomePage={isHomePage}>
             Contact Us
           </NavLink>
+         {!isAuth && <NavLink to="/login" isActive={location.pathname === '/login'} isScrolled={isScrolled} isHomePage={isHomePage}>
+            Login 
+          </NavLink>}
+        {!isAuth &&   <NavLink to="/signup" isActive={location.pathname === '/signup'} isScrolled={isScrolled} isHomePage={isHomePage}>
+            Sign Up
+          </NavLink>}
+         {isAuth && <NavLink to="/login" isActive={location.pathname === '/login'} isScrolled={isScrolled} isHomePage={isHomePage}>
+          logout
+          </NavLink>}
         </div>
 
         {/* Mobile Menu Button */}

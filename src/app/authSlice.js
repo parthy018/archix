@@ -1,21 +1,21 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const baseUrl = "https://arch-backend-2.onrender.com/api"; // Backend base URL
+const baseUrl = "https://arch-backend-fgte.onrender.com/api"; // Backend base URL
 
 export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: fetchBaseQuery({ baseUrl }),
   endpoints: (builder) => ({
-    adminlogin: builder.mutation({
+    login: builder.mutation({
       query: (credentials) => ({
-        url: "/admin/login",
+        url: "/auth/login",
         method: "POST",
         body: credentials,
       }),
     }),
     register: builder.mutation({
       query: (credentials) => ({
-        url: "/register",
+        url: "/auth/signup",
         method: "POST",
         body: credentials,
       }),
@@ -24,4 +24,4 @@ export const authApi = createApi({
 });
 
 // Export hooks for usage in components
-export const { useAdminloginMutation, useRegisterMutation } = authApi;
+export const { useLoginMutation, useRegisterMutation } = authApi;

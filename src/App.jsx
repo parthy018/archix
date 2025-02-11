@@ -13,8 +13,8 @@ import AdminProjects from "./admin/pages/AdminProjects";
 import Review from "./admin/pages/Review";
 import Login from "./pages/Login";
 import CreateProject from "./admin/pages/CreateProject";
-import AdminLogin from "./admin/pages/AdminLogin";
 import ProtectedRoute from "./PrivateRoute";
+import SignUp from "./pages/SignUp";
 // Layout for public routes (with Navbar and Footer)
 const PublicLayout = () => (
   <>
@@ -50,9 +50,10 @@ const router = createBrowserRouter([
   // Admin Routes
   {
     path: "/admin",
-    element: <ProtectedRoute allowedRoles={["admin"]}>
-      <AdminRoutesLayout />
-    </ProtectedRoute>, // Uses Admin Layout
+    // element: <ProtectedRoute allowedRoles={["admin"]}>
+    //   <AdminRoutesLayout />
+    // </ProtectedRoute>, // Uses Admin Layout
+    element: <AdminRoutesLayout />,
     children: [
       { path: "dashboard", element: <AdminDashboard /> },
       { path: "messages", element: <Message /> },
@@ -73,8 +74,8 @@ const router = createBrowserRouter([
     element: <Login />,
   },
   {
-    path: "/admin/login",
-    element: <AdminLogin />,
+    path:"/signup",
+    element: <SignUp />,
   }
 ]);
 

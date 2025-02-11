@@ -1,16 +1,19 @@
 import { useState } from "react";
-import { useRegisterMutation } from "../features/auth/authSlice"; // Import the hook
+import { useRegisterMutation } from "../app/authSlice";
 import BackgroundImage from "../assets/Login.jpg";
+import { signup } from "../app/appSlice";
+import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
-    name: "",
+    fullname: "",
     email: "",
     password: "",
-    phone: "",
   });
 
-  const [register, { isLoading, isError, error, isSuccess }] = useRegisterMutation();
+  const [error, setError] = useState({});
+  const navigate = useNavigate();
+  const [register, { isLoading, isError, error: apiError, isSuccess }] = useRegisterMutation();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -20,16 +23,41 @@ const SignUp = () => {
     }));
   };
 
+  const validateForm = () => {
+    let newErrors = {};
+    
+    if (!formData.fullname.trim()) newErrors.fullname = "Full Name is required";
+    
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Invalid email format";
+    }
+
+    if (!formData.password.trim()) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+
+    setError(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!validateForm()) return; // Stop if validation fails
+
     try {
-      const result = await register(formData).unwrap(); // Unwrap to get the response or throw errors
-      console.log("Registration successful:", result);
+      const result = await register(formData).unwrap();
       alert("Registration successful!");
-      setFormData({ name: "", email: "", password: "", phone: "" }); // Reset form
+      setFormData({ fullname: "", email: "", password: "" });
+      signup({ role: result.role, token: result.token });
+      navigate("/");
     } catch (err) {
       console.error("Registration failed:", err);
+      alert("Registration failed. Please try again.");
     }
   };
 
@@ -39,9 +67,7 @@ const SignUp = () => {
         <div className="flex-1 bg-green-100 text-center hidden lg:flex">
           <div
             className="m-12 xl:m-16 w-full bg-contain bg-center bg-no-repeat"
-            style={{
-              backgroundImage: `url(${BackgroundImage})`,
-            }}
+            style={{ backgroundImage: `url(${BackgroundImage})` }}
           ></div>
         </div>
         <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
@@ -52,42 +78,40 @@ const SignUp = () => {
             <div className="w-full flex-1 mt-1">
               <div className="mx-auto max-w-xs">
                 <input
-                  className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                  className="w-full px-8 py-4 rounded-lg bg-gray-100 border border-gray-200 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
                   type="text"
-                  name="name"
+                  name="fullname"
                   placeholder="Full Name"
-                  value={formData.name}
+                  value={formData.fullname}
                   onChange={handleInputChange}
                 />
+                {error.fullname && <p className="text-red-500 text-xs mt-1">{error.fullname}</p>}
+
                 <input
-                  className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
+                  className="w-full px-8 py-4 rounded-lg bg-gray-100 border border-gray-200 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
                   type="email"
                   name="email"
                   placeholder="Email"
                   value={formData.email}
                   onChange={handleInputChange}
                 />
+                {error.email && <p className="text-red-500 text-xs mt-1">{error.email}</p>}
+
                 <input
-                  className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
+                  className="w-full px-8 py-4 rounded-lg bg-gray-100 border border-gray-200 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
                   type="password"
                   name="password"
                   placeholder="Password"
                   value={formData.password}
                   onChange={handleInputChange}
                 />
-                <input
-                  className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
-                  type="text"
-                  name="phone"
-                  placeholder="Phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                />
+                {error.password && <p className="text-red-500 text-xs mt-1">{error.password}</p>}
+
                 <button
                   className="mt-5 tracking-wide font-semibold bg-green-400 text-white w-full py-4 rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
                   type="submit"
                   onClick={handleSubmit}
-                  disabled={isLoading} // Disable button while loading
+                  disabled={isLoading}
                 >
                   {isLoading ? (
                     <span>Loading...</span>
@@ -110,14 +134,14 @@ const SignUp = () => {
                     </>
                   )}
                 </button>
+
                 {isError && (
                   <p className="mt-2 text-sm text-red-500">
-                    {error?.data?.message || "An error occurred. Please try again."}
+                    {apiError?.data?.message || "An error occurred. Please try again."}
                   </p>
                 )}
-                {isSuccess && (
-                  <p className="mt-2 text-sm text-green-500">Registration successful!</p>
-                )}
+                {isSuccess && <p className="mt-2 text-sm text-green-500">Registration successful!</p>}
+
                 <p className="mt-6 text-xs text-gray-600 text-center">
                   By signing up, you agree to ARCHIX{" "}
                   <a href="#" className="border-b border-gray-500 border-dotted">

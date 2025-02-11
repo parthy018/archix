@@ -16,10 +16,10 @@ const appSlice=createSlice({
             state.user = action.payload;
             state.isAuth = true;
         },
-        adminLogin: (state, action) => {
-            state.token = action.payload.token;
-            state.isAuth = true;
-            state.role = action.payload.role;
+        signup:(state,action)=>{
+            state.isAuth=true;
+            state.role=action.payload.role;
+            state.token=action.payload.token;
         },
         logout: (state) => {
             state.user = null;
@@ -30,5 +30,5 @@ const appSlice=createSlice({
     }
 });
 
-export const { login, logout,adminLogin } = appSlice.actions;
+export const { login, logout,signup } = appSlice.actions;
 export default appSlice.reducer;
