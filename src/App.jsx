@@ -7,14 +7,18 @@ import Projects from "./pages/Projects";
 import ProjectDetail from "./pages/ProjectDetail";
 import Contact from "./pages/Contact";
 import AdminLayout from "./admin/AdminLayout"; // Admin Layout Component
-import AdminDashboard from "./admin/Dashboard";
+import Dashboard from "./admin/Dashboard";
 import Message from "./admin/pages/Message";
 import AdminProjects from "./admin/pages/AdminProjects";
 import Review from "./admin/pages/Review";
 import Login from "./pages/Login";
 import CreateProject from "./admin/pages/CreateProject";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import ProtectedRoute from "./PrivateRoute";
 import SignUp from "./pages/SignUp";
+import { UpdateProject } from "./admin/pages/UpdateProject";
+
 // Layout for public routes (with Navbar and Footer)
 const PublicLayout = () => (
   <>
@@ -42,26 +46,27 @@ const router = createBrowserRouter([
       { path: "/", element: <Home /> },
       { path: "/about", element: <About /> },
       { path: "/projects", element: <Projects /> },
-      { path: "/projects/:id", element: <ProjectDetail /> },
+      { path: "/project-detail/:id", element: <ProjectDetail /> },
       { path: "/contact", element: <Contact /> },
     ],
   },
 
   // Admin Routes
   {
-    path: "/admin",
-    // element: <ProtectedRoute allowedRoles={["admin"]}>
-    //   <AdminRoutesLayout />
-    // </ProtectedRoute>, // Uses Admin Layout
-    element: <AdminRoutesLayout />,
+    path: "admin",
+    element: <ProtectedRoute allowedRoles={["admin"]}>
+      <AdminRoutesLayout />
+    </ProtectedRoute>, // Uses Admin Layout
+   
     children: [
-      { path: "dashboard", element: <AdminDashboard /> },
+      { index:true, element: <Dashboard /> },
       { path: "messages", element: <Message /> },
       {
         path: "project",
         element: <AdminProjects />, 
         children: [
-          { path: "create", element: <CreateProject /> }, 
+          { path: "create", element: <CreateProject /> },
+          { path: ":id", element: <UpdateProject /> }, 
         ],
       },
       { path: "reviews", element: <Review /> },
@@ -80,7 +85,11 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  return <RouterProvider router={router} />;
+  return <>
+    <RouterProvider router={router} />
+    <ToastContainer  position="top-right" autoClose={3000} />
+
+  </>
 }
 
 export default App;

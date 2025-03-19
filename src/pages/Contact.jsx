@@ -1,17 +1,19 @@
 import { FiMapPin, FiPhone, FiMail, FiClock } from "react-icons/fi";
 import { useState } from "react";
 import contactus from "../assets/contactus.jpg";
-
+import { useRequirementsMutation } from "../app/authSlice";
+import { toast } from "react-toastify";
 const Contact = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
-    message: "",
+    requirement: "",
   });
 
   const [error, setError] = useState({});
-
+  const [requirements, {  isSuccess }] = useRequirementsMutation();
+  const [loading,setLoading]=useState(false);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -36,30 +38,50 @@ const Contact = () => {
       errors.phone = "Phone Number must be 10 digits.";
     }
 
-    if (!formData.message.trim()) errors.message = "Message cannot be empty.";
+    if (!formData.requirement.trim()) errors.requirement = "requirement cannot be empty.";
 
     setError(errors);
 
     // Return true if there are no errors
     return Object.keys(errors).length === 0;
   };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (validateForm()) {
-      console.log(formData);
-      alert("Message sent successfully!");
-      // Reset form
+  
+    if (!validateForm()) {
+      toast.error("Please fill in all the required fields.");
+      return; // Stop execution if validation fails
+    }
+  
+    // eslint-disable-next-line no-unused-vars
+    const { email, ...data } = formData;
+    setLoading(true);
+  
+    try {
+      const response = await requirements(data).unwrap();
+      toast.success("Requirement submitted successfully");
+  
       setFormData({
         name: "",
         email: "",
         phone: "",
-        message: "",
+        requirement: "",
       });
-      setError({});
+    } catch (error) {
+      toast.error(error.data?.message || "An error occurred.");
+    } finally {
+      setLoading(false);
     }
   };
+  
+
+  if(loading){
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-green-100">
+        <div className="w-16 h-16 border-4 border-t-4 border-green-500 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pt-16">
@@ -165,22 +187,22 @@ const Contact = () => {
 
               <div>
                 <label
-                  htmlFor="message"
+                  htmlFor="requirement"
                   className="block text-sm font-medium text-gray-700 dark:text-gray-300"
                 >
-                  Message
+                  requirement
                 </label>
                 <textarea
-                  id="message"
+                  id="requirement"
                   rows={5}
-                  value={formData.message}
-                  name="message"
+                  value={formData.requirement}
+                  name="requirement"
                   onChange={handleChange}
-                  placeholder="Write your message here"
+                  placeholder="Write your requirement here"
                   className="mt-1 block w-full pl-2 rounded-md border-2 shadow-sm focus:outline-none focus:border-blue-500  focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-600 transition-all"
                 ></textarea>
-                {error.message && (
-                  <p className="text-sm text-red-500 mt-1">{error.message}</p>
+                {error.requirement && (
+                  <p className="text-sm text-red-500 mt-1">{error.requirement}</p>
                 )}
               </div>
 
@@ -188,7 +210,7 @@ const Contact = () => {
                 type="submit"
                 className="w-full bg-blue-600 text-white py-3 px-6 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors"
               >
-                Send Message
+                Send requirement
               </button>
             </form>
           </div>
@@ -238,10 +260,9 @@ const Contact = () => {
 
             {/* Map */}
             <div className="mt-8 bg-gray-200 h-64 rounded-lg">
-              {/* Add your map integration here */}
-              <div className="w-full h-full flex items-center justify-center text-gray-500">
-                Map Integration
-              </div>
+              <div className="overflow-hidden rounded-lg lg:col-span-2 h-96 lg:h-auto">
+                <iframe width="100%" height="100%"  title="map"   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d230.01374200854204!2d75.899400129882!3d22.720067640777202!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3962fd32d8c9023d%3A0xece9755366afdcf5!2sTilak%20Nagar%2C%20Indore%2C%20Madhya%20Pradesh%20452018!5e0!3m2!1sen!2sin!4v1741677860947!5m2!1sen!2sin"></iframe>
+            </div>
             </div>
           </div>
         </div>

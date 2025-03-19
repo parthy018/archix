@@ -13,7 +13,8 @@ const appSlice=createSlice({
     initialState,
     reducers:{
         login: (state, action) => {
-            state.user = action.payload;
+            state.token=action.payload.token;
+            state.role=action.payload.role;
             state.isAuth = true;
         },
         signup:(state,action)=>{

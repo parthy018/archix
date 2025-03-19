@@ -8,15 +8,15 @@ function Header() {
   const navigate = useNavigate();
   const toggleDropdown = () => {
     setDropdownOpen((prev) => !prev);
-  };
+  };                      
   const handleLogout = () => {
-    dispatch(logout());
+    dispatch(logout());                                                                          
     navigate("/");
   }
 
   return (
     <header className="p-4   mx-4 mt-6">
-      {/* Breadcrumb */}
+      {/* Breadcrumb */}                                            
       <div className="flex items-center justify-between">
 
       <div className="flex items-center space-x-2">

@@ -1,15 +1,18 @@
   import  { useState } from 'react';
-
+import { useSubmitReviewMutation } from '../app/feedbackSlice';
+import { useSelector } from 'react-redux';
+import LoginModal from '../components/LoginModal';
   const FeedbackForm = () => {
-
     const [formData, setFormData] = useState({
         name: '',
-        email: '',
+        // email: '',
         project:"",
         message: '',
         rating: 0
     })
-
+    const { isAuth } = useSelector((state) => state.app);
+    const [isModelOpen, setIsModelOpen] = useState(false);
+    const [submitReview, { isLoading, }] = useSubmitReviewMutation();
     const handleChange=(e)=>{
       const {name,value}=e.target;
       setFormData((prevData)=>{
@@ -26,23 +29,43 @@
       }));
     };
 
-    const handleSubmit = (e) => {
-      e.preventDefault();
-      console.log(formData);
-      alert('Feedback submitted!');
-      // Optionally, reset form data after submission:
-      setFormData({
-        name: '',
-        email: '',
-        message: '',
-        rating: 0,
-      });
+    const createPayload = (data) => {
+      const payload = {
+        clientName: data.name,
+        reviewText: data.message,
+        rating: data.rating,
+      };
+      if (data.project) {
+        payload.project = data.project;
+      }
+      return payload;
     };
-
+  
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      const payload = createPayload(formData);
+      if(!isAuth)setIsModelOpen(true);
+      try {
+        const response = await submitReview(payload).unwrap();
+        setFormData({
+          name: '',
+          project: '',
+          message: '',
+          rating: 0,
+        });
+        console.log("Review Submitted Successfully:", response);  
+        alert("Review Submitted Successfully");
+      } catch (error) {
+        console.error("Failed to submit review:", error);
+        alert("Failed to submit review. Please try again.");
+      }
+    };
+    
     return (
       <div
         className="w-full min-h-screen p-8 flex items-center justify-center"
       >
+        <LoginModal isOpen={isModelOpen} onClose={() => setIsModelOpen(false)} />
         <div className="sm:max-w-6xl w-full bg-white shadow-2xl rounded-3xl overflow-hidden sm:flex">
           {/* Left Side: Information Section */}
           <div className="hidden sm:flex w-1/2 bg-blue-500 items-center justify-center p-8">
@@ -58,8 +81,6 @@
               </p>
             </div>
           </div>
-
-          {/* Right Side: Feedback Form */}
           <form
             onSubmit={handleSubmit}
             className="w-full sm:w-1/2 p-8 sm:p-12 space-y-6"
@@ -67,8 +88,6 @@
             <h3 className="text-2xl font-semibold text-gray-800">
               Tell us what you think!
             </h3>
-
-            {/* Name Field */}
             <div>
               <label htmlFor="name" className="block text-gray-700 font-medium mb-1">
                 Name
@@ -84,23 +103,6 @@
                 onChange={handleChange}
               />
             </div>
-
-            {/* Email Field */}
-            <div>
-              <label htmlFor="email" className="block text-gray-700 font-medium mb-1">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                name='email'
-                className="w-full border-b border-gray-300 p-2 focus:border-blue-500  focus:outline-none"
-                placeholder="Your Email"
-                required
-                value={formData.email}
-                onChange={handleChange}
-              />
-            </div>
             <div>
               <label htmlFor="project" className="block text-gray-700 font-medium mb-1">
                 Select Project
@@ -109,7 +111,6 @@
                 id="project"
                 name="project"
                 className="w-full border-b border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
-                required
                 value={formData.project}
                 onChange={handleChange}
                 placeholder="Select Project"
@@ -161,6 +162,7 @@
             <button
               type="submit"
               className="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-600 focus:ring-4 focus:ring-blue-300"
+              disabled={isLoading}
             >
               Submit Feedback
             </button>

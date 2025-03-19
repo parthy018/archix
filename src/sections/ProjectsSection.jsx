@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import  { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import { Navigation, } from "swiper/modules";
 import { FiArrowRight } from "react-icons/fi";
 import "swiper/css";
 import "swiper/css/navigation";
+import { useNavigate } from "react-router-dom";
 
 const ProjectsSection = () => {
   const [projects, setProjects] = useState([]);
-
+  const navigate = useNavigate();
   useEffect(() => {
     // Simulating API call using axios
     const fetchProjects = async () => {
@@ -53,10 +53,10 @@ const ProjectsSection = () => {
   }, []);
 
   return (
-    <section className="py-10 bg-gray-50">
+    <section className="py-10 ">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-4xl font-bold text-gray-700 mb-4">
             Latest Projects
           </h2>
           <p className="text-gray-600">
@@ -76,7 +76,7 @@ const ProjectsSection = () => {
         >
           {projects.map((project) => (
             <SwiperSlide key={project.id}>
-              <div className="bg-white rounded-lg overflow-hidden shadow-lg">
+              <div className="bg-white rounded-lg overflow-hidden shadow-lg border ">
                 <img
                   src={project.image}
                   alt={project.title}
@@ -87,8 +87,9 @@ const ProjectsSection = () => {
                     {project.category}
                   </span>
                   <h3 className="text-xl font-bold mt-2">{project.title}</h3>
-                  <button className="mt-4 flex items-center text-blue-600 hover:text-blue-700">
-                    View Project <FiArrowRight className="ml-2 w-4 h-4" />
+                  <button className="mt-4 flex items-center text-blue-600 hover:text-sky-700 group"
+                  onClick={()=>{navigate('/projects')}}>
+                    View Project <FiArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </button>
                 </div>
               </div>

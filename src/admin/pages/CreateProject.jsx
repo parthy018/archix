@@ -1,6 +1,8 @@
-import React from "react";
-import { useForm, useFieldArray } from "react-hook-form";
 
+import { useForm, useFieldArray } from "react-hook-form";
+import {useCreateProjectMutation} from "../../app/feedbackSlice.js";
+import { toast } from "react-toastify";
+import Button from "../../components/Button.jsx";
 const CreateProject = () => {
   const { register, handleSubmit, control, watch, setValue } = useForm({
     defaultValues: {
@@ -14,6 +16,7 @@ const CreateProject = () => {
       tags: [""], // Start with one empty tag field
     },
   });
+  const [createProject, { isLoading, isError, isSuccess }] = useCreateProjectMutation();
 
   const {
     fields: featureFields,
@@ -43,15 +46,74 @@ const CreateProject = () => {
   });
 
   const watchImages = watch("images");
-  const onSubmit = (data) => {
-    console.log("Form Data Submitted:", data);
+  const onSubmit = async (data) => {
+    console.log(data);
+    const formData = new FormData();
+    formData.append("projectName", data.title);
+    formData.append("clientName", data.client);
+    formData.append("location", data.location);
+    formData.append("dateCompleted", data.dateCompleted);
+    formData.append("description", data.description);
+
+    // Convert features and tags arrays to comma-separated strings
+    formData.append("features", data.features.join(","));
+    formData.append("tags", data.tags.join(","));
+
+    // Append images to FormData
+    data.images.forEach((image) => {
+      if (image instanceof File) {
+        formData.append("images", image);
+      }
+    });
+
+    console.log([...formData.entries()]);
+
+    try {
+      await createProject(formData).unwrap();
+      alert("Project created successfully!");
+      if(isSuccess){
+        setValue("title", "");
+        setValue("client", "");
+        setValue("location", "");
+        setValue("dateCompleted", "");
+        setValue("description", "");
+        setValue("features", [""]);
+        setValue("tags", [""]);
+        setValue("images", []);
+        toast.success("Project created successfully!");
+      }
+    } catch (error) {
+      console.error("Error creating project:", error);
+      alert("Failed to create project.");
+      toast.error(error);
+    }
   };
+    if(isError){
+      toast.error("Failed to create project");
+    }
+
+    if(isLoading){
+      return <>
+         <div className="relative">
+        <div className="w-12 h-12 rounded-full absolute border-8 border-solid border-gray-200"></div>
+        <div
+            className="w-12 h-12 rounded-full animate-spin absolute  border-8 border-solid border-green-500 border-t-transparent">
+        </div>
+    </div>
+      </>
+    }
 
   return (
     <div className="max-w-full mx-auto">
+    <div className="flex justify-between items-center mb-6">
+
       <h2 className="text-2xl font-bold text-gray-600 mb-6">Create Project</h2>
+     
+    </div>
+
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        
           {/* Title */}
           <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-600">Title</label>
@@ -109,7 +171,7 @@ const CreateProject = () => {
             rows="4"
           ></textarea>
         </div>
-
+  
         {/* Images */}
         <div>
           <label className="text-sm font-medium text-gray-600">Images : </label>
@@ -231,266 +293,16 @@ const CreateProject = () => {
         </div>
 
         {/* Submit Button */}
-        <button
+        <Button
           type="submit"
-          className="w-full bg-sky-500 text-white py-2 px-4 rounded hover:bg-sky-600 transition-colors"
+          className=" bg-sky-500 text-white py-2 px-4 rounded hover:bg-sky-600 transition-colors"
         >
           Submit
-        </button>
+        </Button>
+      
       </form>
     </div>
   );
 };
 
 export default CreateProject;
-
-// import React, { useState } from "react";
-
-// const CreateProject = () => {
-//   const [projectData, setProjectData] = useState({
-//     title: "",
-//     client: "",
-//     location: "",
-//     dateCompleted: "",
-//     description: "",
-//     images: [null],
-//     features: [""],
-//     tags: [""],
-//   });
-
-//   const handleChange = (e) => {
-//     const { name, value } = e.target;
-//     setProjectData({ ...projectData, [name]: value });
-//   };
-
-//   const handleFileChange = (e, index) => {
-//     const file = e.target.files[0];
-//     const updatedImages = [...projectData.images];
-//     updatedImages[index] = file;
-//     setProjectData({ ...projectData, images: updatedImages });
-//   };
-
-//   const handleArrayChange = (e, key, index) => {
-//     const updatedArray = [...projectData[key]];
-//     updatedArray[index] = e.target.value;
-//     setProjectData({ ...projectData, [key]: updatedArray });
-//   };
-
-//   const addToArray = (key) => {
-//     setProjectData({
-//       ...projectData,
-//       [key]: [...projectData[key], key === "images" ? null : ""],
-//     });
-//   };
-
-//   const removeFromArray = (key, index) => {
-//     const updatedArray = projectData[key].filter((_, i) => i !== index);
-//     setProjectData({ ...projectData, [key]: updatedArray });
-//   };
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     console.log("Project Data Submitted:", projectData);
-//   };
-
-//   return (
-//     <div className="max-w-full mx-auto">
-//       <h2 className="text-2xl font-bold text-gray-600 mb-6">Create Project</h2>
-//       <form onSubmit={handleSubmit}>
-//         <div className=" grid grid-cols-1 md:grid-cols-2 gap-4">
-//           {/* Title */}
-//           <div className="flex flex-col">
-//             <label className="text-sm font-medium text-gray-600">Title</label>
-//             <input
-//               type="text"
-//               name="title"
-//               value={projectData.title}
-//               onChange={handleChange}
-//               placeholder="Enter project title"
-//               className="mt-2 p-2 border border-gray-300 rounded focus:ring focus:ring-sky-400 focus:outline-none"
-//             />
-//           </div>
-//           {/* Client */}
-//           <div className="flex flex-col">
-//             <label className="text-sm font-medium text-gray-600">Client</label>
-//             <input
-//               type="text"
-//               name="client"
-//               value={projectData.client}
-//               onChange={handleChange}
-//               placeholder="Enter client name"
-//               className="mt-2 p-2 border border-gray-300 rounded focus:ring focus:ring-sky-400 focus:outline-none"
-//             />
-//           </div>
-
-//           {/* Location */}
-//           <div className="flex flex-col">
-//             <label className="text-sm font-medium text-gray-600">
-//               Location
-//             </label>
-//             <input
-//               type="text"
-//               name="location"
-//               value={projectData.location}
-//               onChange={handleChange}
-//               placeholder="Enter location"
-//               className="mt-2 p-2 border border-gray-300 rounded focus:ring focus:ring-sky-400 focus:outline-none"
-//             />
-//           </div>
-
-//           {/* Date Completed */}
-//           <div className="flex flex-col">
-//             <label className="text-sm font-medium text-gray-600">
-//               Date Completed
-//             </label>
-//             <input
-//               type="date"
-//               name="dateCompleted"
-//               value={projectData.dateCompleted}
-//               onChange={handleChange}
-//               className="mt-2 p-2 border border-gray-300 rounded focus:ring focus:ring-sky-400 focus:outline-none"
-//             />
-//           </div>
-//         </div>
-
-//         {/* Description */}
-//         <div className="flex flex-col">
-//           <label className="text-sm font-medium text-gray-600">
-//             Description
-//           </label>
-//           <textarea
-//             name="description"
-//             value={projectData.description}
-//             onChange={handleChange}
-//             placeholder="Enter project description"
-//             className="mt-2 p-2 border border-gray-300 rounded focus:ring focus:ring-sky-400 focus:outline-none"
-//             rows="4"
-//           ></textarea>
-//         </div>
-
-//         {/* Images */}
-//         <div>
-//           <label className="text-sm font-medium text-gray-600">Images</label>
-//           {projectData.images.map((_, index) => (
-//             <div key={index} className="flex items-center space-x-4 mt-2">
-//               <input
-//                 type="file"
-//                 accept="image/*"
-//                 onChange={(e) => handleFileChange(e, index)}
-//                 className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded
-//                  file:border file:border-gray-300 file:text-gray-700 file:bg-gray-50 hover:file:bg-gray-100"
-//               />
-//               <button
-//                 type="button"
-//                 onClick={() => removeFromArray("images", index)}
-//                 className="text-red-600 hover:text-red-800"
-//               >
-//                 Remove
-//               </button>
-//             </div>
-//           ))}
-//           <button
-//             type="button"
-//             onClick={() => addToArray("images")}
-//             className="mt-3 text-sm text-sky-600 hover:text-sky-800"
-//           >
-//             + Add Another Image
-//           </button>
-//           {projectData.images.some((image) => image) && (
-//             <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
-//               {projectData.images.map(
-//                 (image, index) =>
-//                   image && (
-//                     <div key={index} className="relative">
-//                       <img
-//                         src={URL.createObjectURL(image)}
-//                         alt={`Uploaded ${index + 1}`}
-//                         className="w-full h-32 object- border rounded"
-//                       />
-//                       <button
-//                         type="button"
-//                         onClick={() => removeFromArray("images", index)}
-//                         className="absolute top-1 right-1 bg-red-600 text-white rounded-full p-1 text-xs hover:bg-red-800"
-//                       >
-//                         ✕
-//                       </button>
-//                     </div>
-//                   )
-//               )}
-//             </div>
-//           )}
-//         </div>
-
-//         {/* Features */}
-//         <div>
-//           <label className="text-sm font-medium text-gray-600">Features</label>
-//           {projectData.features.map((feature, index) => (
-//             <div key={index} className="flex items-center space-x-4 mt-2">
-//               <input
-//                 type="text"
-//                 value={feature}
-//                 onChange={(e) => handleArrayChange(e, "features", index)}
-//                 placeholder="Enter feature"
-//                 className="flex-1 p-2 border border-gray-300 rounded focus:ring focus:ring-sky-400 focus:outline-none"
-//               />
-//               <button
-//                 type="button"
-//                 onClick={() => removeFromArray("features", index)}
-//                 className="text-red-600 hover:text-red-800"
-//               >
-//                 Remove
-//               </button>
-//             </div>
-//           ))}
-//           <button
-//             type="button"
-//             onClick={() => addToArray("features")}
-//             className="mt-3 text-sm text-sky-600 hover:text-sky-800"
-//           >
-//             + Add Another Feature
-//           </button>
-//         </div>
-
-//         {/* Tags */}
-//         <div>
-//           <label className="text-sm font-medium text-gray-600">Tags</label>
-//           {projectData.tags.map((tag, index) => (
-//             <div key={index} className="flex items-center space-x-4 mt-2">
-//               <input
-//                 type="text"
-//                 value={tag}
-//                 onChange={(e) => handleArrayChange(e, "tags", index)}
-//                 placeholder="Enter tag"
-//                 className="flex-1 p-2 border border-gray-300 rounded focus:ring focus:ring-sky-400 focus:outline-none"
-//               />
-//               <button
-//                 type="button"
-//                 onClick={() => removeFromArray("tags", index)}
-//                 className="text-red-600 hover:text-red-800"
-//               >
-//                 Remove
-//               </button>
-//             </div>
-//           ))}
-//           <button
-//             type="button"
-//             onClick={() => addToArray("tags")}
-//             className="mt-3 text-sm text-sky-600 hover:text-sky-800"
-//           >
-//             + Add Another Tag
-//           </button>
-//         </div>
-
-//         {/* Submit Button */}
-//         <button
-//           type="submit"
-//           className="w-full bg-sky-500 text-white py-2 px-4 rounded hover:bg-sky-600 transition-colors"
-//         >
-//           Submit
-//         </button>
-//       </form>
-//     </div>
-//   );
-// };
-
-// export default CreateProject;
