@@ -92,7 +92,7 @@ const Home = () => {
         </Swiper>
       </section>
 
-      <section className="py-20 bg-[#f0fdfa] min-h-60">
+      <section className="py-20 bg-[#f8f9fa] min-h-60">
         <div className="max-w-7xl mx-auto  p-6 sm:p-12 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center"
         >
           

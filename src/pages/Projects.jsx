@@ -29,7 +29,7 @@ const Projects = () => {
   ) || [];
 
   return (
-    <div className="container mx-auto max-w-7xl py-6 px-6">
+    <div className="container mx-auto max-w-7xl bg-[#f8f9fa] py-6 px-6">
       <h1 className="text-4xl mt-10 font-bold text-center mb-8 text-gray-800">Projects</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
         {displayedProjects.map((project) => (

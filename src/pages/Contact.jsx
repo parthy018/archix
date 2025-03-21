@@ -3,6 +3,8 @@ import { useState } from "react";
 import contactus from "../assets/contactus.jpg";
 import { useRequirementsMutation } from "../app/authSlice";
 import { toast } from "react-toastify";
+import InputField from "../components/Input";
+import TextAreaField from "../components/TextArea";
 const Contact = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -12,8 +14,8 @@ const Contact = () => {
   });
 
   const [error, setError] = useState({});
-  const [requirements, {  isSuccess }] = useRequirementsMutation();
-  const [loading,setLoading]=useState(false);
+  const [requirements] = useRequirementsMutation();
+  const [loading, setLoading] = useState(false);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -38,7 +40,8 @@ const Contact = () => {
       errors.phone = "Phone Number must be 10 digits.";
     }
 
-    if (!formData.requirement.trim()) errors.requirement = "requirement cannot be empty.";
+    if (!formData.requirement.trim())
+      errors.requirement = "requirement cannot be empty.";
 
     setError(errors);
 
@@ -47,20 +50,20 @@ const Contact = () => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (!validateForm()) {
       toast.error("Please fill in all the required fields.");
       return; // Stop execution if validation fails
     }
-  
+
     // eslint-disable-next-line no-unused-vars
     const { email, ...data } = formData;
     setLoading(true);
-  
+
     try {
-      const response = await requirements(data).unwrap();
+      await requirements(data).unwrap();
       toast.success("Requirement submitted successfully");
-  
+
       setFormData({
         name: "",
         email: "",
@@ -73,9 +76,8 @@ const Contact = () => {
       setLoading(false);
     }
   };
-  
 
-  if(loading){
+  if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-green-100">
         <div className="w-16 h-16 border-4 border-t-4 border-green-500 rounded-full animate-spin"></div>
@@ -85,107 +87,77 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen pt-16">
-      <div
-        className="bg-gray-900 text-white py-20 relative"
-        style={{
-          backgroundImage: `url(${contactus})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(255, 255, 255, 0.5)", // Adds a semi-transparent overlay
-            backdropFilter: "blur(1px)", // Adds blur effect
-          }}
-        ></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
-          <h1 className="text-4xl font-bold mb-4 text-slate-700">Contact Us</h1>
-          <p className="text-xl text-gray-800">
-            Let&apos;s discuss your next project
-          </p>
-        </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
+        <h1 className="text-4xl font-bold mb-4 text-slate-700">Contact Us</h1>
+        <p className="text-xl text-gray-800">
+          Any question or remarks? Just write us a message!
+        </p>
       </div>
 
       {/* Contact Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-          {/* Contact Form */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 shadow-xl ">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 ">
+          {/* Contact Information */}
+          <div className="bg-[#000000] p-8 rounded-lg">
+            <h2 className="text-3xl font-bold mb-8 text-white">
+              Contact Information
+            </h2>
+            <div className="space-y-8">
+              <div className="flex items-start space-x-4">
+                <FiMapPin className="w-6 h-6 text-white flex-shrink-0" />
+                <div>
+                  <h3 className="font-semibold  text-white">Office Address</h3>
+                  <p className="text-white">
+                    123 Architecture St, Design City, ST 12345
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-4">
+                <FiPhone className="w-6 h-6 text-white flex-shrink-0" />
+                <div>
+                  <h3 className="font-semibold text-white">Phone</h3>
+                  <p className="text-white">+1 (555) 123-4567</p>
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-4">
+                <FiMail className="w-6 h-6 text-white flex-shrink-0" />
+                <div>
+                  <h3 className="font-semibold text-white">Email</h3>
+                  <p className="text-white">info@archix.com</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Map */}
+            <div className="mt-4 bg-gray-200 h-64 rounded-lg">
+              <div className="overflow-hidden rounded-lg lg:col-span-2 h-uato lg:h-auto">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  title="map"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d230.01374200854204!2d75.899400129882!3d22.720067640777202!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3962fd32d8c9023d%3A0xece9755366afdcf5!2sTilak%20Nagar%2C%20Indore%2C%20Madhya%20Pradesh%20452018!5e0!3m2!1sen!2sin&zoom=15"
+                  allowFullScreen
+                  loading="lazy"
+                ></iframe>
+              </div>
+            </div>
+          </div>
+
           <div>
-            <h2 className="text-3xl font-bold mb-8 text-gray-800">Get in Touch</h2>
             <form
-              className="space-y-6 max-w-xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg"
+              className="space-y-6 max-w-xl mx-auto  bg-white dark:bg-gray-800 py-4 "
               onSubmit={handleSubmit}
             >
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  onChange={handleChange}
-                  value={formData.name}
-                  placeholder="Enter your full name"
-                  className="mt-1 block w-full pl-2 rounded-md h-10 border-2 shadow-sm focus:outline-none focus:border-blue-500  focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-600 transition-all"
-                />
-                {error.name && (
-                  <p className="text-sm text-red-500 mt-1">{error.name}</p>
-                )}
-              </div>
+            <div className="grid grid-cols-2 gap-4">
+              <InputField  label={"Full Name" } name={"name"} value={formData.name} onChange={handleChange} error={error.name} />
+              <InputField  label={"Email" } type={"email"} name={"email"} value={formData.email} onChange={handleChange} error={error.email} />
+            </div>
+              <InputField  label={"Phone Number"} type={"tel"} name={"phone"} value={formData.phone} onChange={handleChange} error={error.phone} />
 
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  onChange={handleChange}
-                  value={formData.email}
-                  placeholder="Enter your email address"
-                  className="mt-1 block w-full pl-2 rounded-md h-10 border-2 shadow-sm focus:outline-none focus:border-blue-500  focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-600 transition-all"
-                />
-                {error.email && (
-                  <p className="text-sm text-red-500 mt-1">{error.email}</p>
-                )}
-              </div>
-
-              <div>
-                <label
-                  htmlFor="phone"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Phone Number
-                </label>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  placeholder="Enter your phone number"
-                  className="mt-1 block w-full pl-2 rounded-md h-10 border-2 shadow-sm focus:outline-none focus:border-blue-500  focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-600 transition-all"
-                />
-                {error.phone && (
-                  <p className="text-sm text-red-500 mt-1">{error.phone}</p>
-                )}
-              </div>
-
-              <div>
+              <TextAreaField label={"Requirement"} name={"requirement"} value={formData.requirement} onChange={handleChange} error={error.requirement} />
+              {/* <div>
                 <label
                   htmlFor="requirement"
                   className="block text-sm font-medium text-gray-700 dark:text-gray-300"
@@ -202,71 +174,23 @@ const Contact = () => {
                   className="mt-1 block w-full pl-2 rounded-md border-2 shadow-sm focus:outline-none focus:border-blue-500  focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-600 transition-all"
                 ></textarea>
                 {error.requirement && (
-                  <p className="text-sm text-red-500 mt-1">{error.requirement}</p>
+                  <p className="text-sm text-red-500 mt-1">
+                    {error.requirement}
+                  </p>
                 )}
-              </div>
+              </div> */}
 
               <button
                 type="submit"
-                className="w-full bg-blue-600 text-white py-3 px-6 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors"
+                className="w-full lg:w-1/2 bg-[#000000] text-white py-3 px-6 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors"
               >
                 Send requirement
               </button>
             </form>
           </div>
-
-          {/* Contact Information */}
-          <div>
-            <h2 className="text-3xl font-bold mb-8">Contact Information</h2>
-            <div className="space-y-8">
-              <div className="flex items-start space-x-4">
-                <FiMapPin className="w-6 h-6 text-blue-600 flex-shrink-0" />
-                <div>
-                  <h3 className="font-semibold">Office Address</h3>
-                  <p className="text-gray-600">
-                    123 Architecture St, Design City, ST 12345
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-4">
-                <FiPhone className="w-6 h-6 text-blue-600 flex-shrink-0" />
-                <div>
-                  <h3 className="font-semibold">Phone</h3>
-                  <p className="text-gray-600">+1 (555) 123-4567</p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-4">
-                <FiMail className="w-6 h-6 text-blue-600 flex-shrink-0" />
-                <div>
-                  <h3 className="font-semibold">Email</h3>
-                  <p className="text-gray-600">info@archix.com</p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-4">
-                <FiClock className="w-6 h-6 text-blue-600 flex-shrink-0" />
-                <div>
-                  <h3 className="font-semibold">Business Hours</h3>
-                  <p className="text-gray-600">
-                    Monday - Friday: 9:00 AM - 6:00 PM
-                  </p>
-                  <p className="text-gray-600">Saturday: 10:00 AM - 2:00 PM</p>
-                  <p className="text-gray-600">Sunday: Closed</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Map */}
-            <div className="mt-8 bg-gray-200 h-64 rounded-lg">
-              <div className="overflow-hidden rounded-lg lg:col-span-2 h-96 lg:h-auto">
-                <iframe width="100%" height="100%"  title="map"   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d230.01374200854204!2d75.899400129882!3d22.720067640777202!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3962fd32d8c9023d%3A0xece9755366afdcf5!2sTilak%20Nagar%2C%20Indore%2C%20Madhya%20Pradesh%20452018!5e0!3m2!1sen!2sin!4v1741677860947!5m2!1sen!2sin"></iframe>
-            </div>
-            </div>
-          </div>
         </div>
       </div>
+
     </div>
   );
 };
