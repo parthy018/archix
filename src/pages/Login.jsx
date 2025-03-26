@@ -50,8 +50,8 @@ const SignIn = () => {
     };
 
     return (
-       <div className="h-screen bg-gray-900 text-gray-100 flex justify-center">
-    <div className="w-full m-0 bg-gray-800 shadow sm:rounded-lg flex justify-center flex-1">
+       <div className="h-screen bg-[#000000] text-gray-100 flex justify-center">
+    <div className="w-full m-0 bg-gradient-to-br from-[#35383b] via-[#25292b] to-[#131719] shadow sm:rounded-lg flex justify-center flex-1">
         <div className="flex-1 bg-gray-700 text-center hidden lg:flex">
             <img src={'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80'} alt="login" className="h-full w-full object-cover opacity-80" />
         </div>
