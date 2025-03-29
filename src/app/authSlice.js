@@ -44,6 +44,12 @@ export const authApi = createApi({
         body:payload,
         headers:{ "Content-Type": "application/json" },
       })
+    }),
+    getRequirements:builder.query({
+      query:()=>({
+        url:"/admin/requirements",
+        method:"GET",
+      })
     })
   }),
 
@@ -51,5 +57,5 @@ export const authApi = createApi({
 
 // Export hooks for usage in components
 export const { useLoginMutation, useRegisterMutation , useGetReviewQuery,
-  useGetAllProjectQuery,useGetSliderImagesQuery,useRequirementsMutation
+  useGetAllProjectQuery,useGetSliderImagesQuery,useRequirementsMutation,useGetRequirementsQuery
 } = authApi;

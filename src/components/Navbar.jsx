@@ -8,9 +8,9 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
-  const isActive=(path)=>location.pathname===path;
   const isHomePage = location.pathname === '/';
   const {isAuth}=useSelector((state)=>state.app);
+  console.log(isAuth);
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);

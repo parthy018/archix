@@ -1,6 +1,5 @@
-import { FiMapPin, FiPhone, FiMail, FiClock } from "react-icons/fi";
+import { FiMapPin, FiPhone, FiMail } from "react-icons/fi";
 import { useState } from "react";
-import contactus from "../assets/contactus.jpg";
 import { useRequirementsMutation } from "../app/authSlice";
 import { toast } from "react-toastify";
 import InputField from "../components/Input";
@@ -9,7 +8,7 @@ const Contact = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phone: "",
+    phoneNumber: "",
     requirement: "",
   });
 
@@ -34,10 +33,10 @@ const Contact = () => {
       errors.email = "Email format is invalid.";
     }
 
-    if (!formData.phone.trim()) {
-      errors.phone = "Phone Number is required.";
-    } else if (!/^\d{10}$/.test(formData.phone)) {
-      errors.phone = "Phone Number must be 10 digits.";
+    if (!formData.phoneNumber.trim()) {
+      errors.phoneNumber = "phoneNumber Number is required.";
+    } else if (!/^\d{10}$/.test(formData.phoneNumber)) {
+      errors.phoneNumber = "phoneNumber Number must be 10 digits.";
     }
 
     if (!formData.requirement.trim())
@@ -67,7 +66,7 @@ const Contact = () => {
       setFormData({
         name: "",
         email: "",
-        phone: "",
+        phoneNumber: "",
         requirement: "",
       });
     } catch (error) {
@@ -77,13 +76,7 @@ const Contact = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-green-100">
-        <div className="w-16 h-16 border-4 border-t-4 border-green-500 rounded-full animate-spin"></div>
-      </div>
-    );
-  }
+
 
   return (
     <div className="min-h-screen pt-16">
@@ -116,8 +109,8 @@ const Contact = () => {
               <div className="flex items-start space-x-4">
                 <FiPhone className="w-6 h-6 text-white flex-shrink-0" />
                 <div>
-                  <h3 className="font-semibold text-white">Phone</h3>
-                  <p className="text-white">+1 (555) 123-4567</p>
+                  <h3 className="font-semibold text-white">phoneNumber</h3>
+                  <p className="text-white">+91 93020 26604</p>
                 </div>
               </div>
 
@@ -154,7 +147,7 @@ const Contact = () => {
               <InputField  label={"Full Name" } name={"name"} value={formData.name} onChange={handleChange} error={error.name} />
               <InputField  label={"Email" } type={"email"} name={"email"} value={formData.email} onChange={handleChange} error={error.email} />
             </div>
-              <InputField  label={"Phone Number"} type={"tel"} name={"phone"} value={formData.phone} onChange={handleChange} error={error.phone} />
+              <InputField  label={"Contact Number"} type={"tel"} name={"phoneNumber"} value={formData.phoneNumber} onChange={handleChange} error={error.phoneNumber} />
 
               <TextAreaField label={"Requirement"} name={"requirement"} value={formData.requirement} onChange={handleChange} error={error.requirement} />
               {/* <div>
@@ -183,6 +176,7 @@ const Contact = () => {
               <button
                 type="submit"
                 className="w-full lg:w-1/2 bg-[#000000] text-white py-3 px-6 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors"
+                disabled={loading}
               >
                 Send requirement
               </button>

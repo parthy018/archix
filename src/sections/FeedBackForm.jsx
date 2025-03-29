@@ -6,6 +6,7 @@ import LoginModal from '../components/LoginModal';
 import InputField from '../components/Input';
 import SelectField from '../components/Select';
 import TextAreaField from '../components/TextArea';
+import feedback from '../assets/feedback.svg';
 const FeedbackForm = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -51,8 +52,11 @@ const FeedbackForm = () => {
     <div className="w-full min-h-screen p-8 flex items-center justify-center">
       <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       <div className="sm:max-w-6xl w-full bg-white shadow-2xl rounded-3xl overflow-hidden sm:flex">
-        <aside className="hidden sm:flex w-1/2 bg-[#000000] items-center justify-center p-8 text-white">
-          <div className="space-y-4">
+        <aside className="hidden sm:flex w-1/2 flex-col bg-white items-center justify-center p-8 ">
+        <div className='space-y-4'>
+              <img  src={feedback} alt="Feedback" className="w-full h-[20rem] object-cover " />
+          </div>
+          <div className="space-y-4 flex flex-col items-center justify-center text-center">
             <h2 className="text-3xl font-bold">We&apos;d Love Your Feedback!</h2>
             <p className="text-lg">Your feedback helps us improve and provide the best services.</p>
           </div>

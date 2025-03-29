@@ -3,14 +3,15 @@ import { useRegisterMutation } from "../app/authSlice";
 import BackgroundImage from "../assets/Login.jpg";
 import { signup } from "../app/appSlice";
 import { useNavigate } from "react-router-dom";
-
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 const SignUp = () => {
   const [formData, setFormData] = useState({
     fullname: "",
     email: "",
     password: "",
   });
-
+  const dispatch = useDispatch();
   const [error, setError] = useState({});
   const navigate = useNavigate();
   const [register, { isLoading, isError, error: apiError, isSuccess }] = useRegisterMutation();
@@ -51,9 +52,10 @@ const SignUp = () => {
 
     try {
       const result = await register(formData).unwrap();
-      alert("Registration successful!");
       setFormData({ fullname: "", email: "", password: "" });
-      signup({ role: result.role, token: result.token });
+      console.log(result);
+      toast.success("Registration successful!");
+      dispatch(signup({ role: result.role, token: result.token }));
       navigate("/");
     } catch (err) {
       console.error("Registration failed:", err);
